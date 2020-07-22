@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:thoikhoabieu/base/colors.dart';
 
 class TimePicker extends StatefulWidget {
   TimePicker({Key key}) : super(key: key);
@@ -9,51 +11,45 @@ class TimePicker extends StatefulWidget {
 }
 
 class _TimePickerState extends State<TimePicker> {
+  String currentTime = '';
+  @override
+  void initState() {
+    super.initState();
+    _setCurrentTime();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      // width: 150,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(20.0),
+        color: AppColors.colorButton,
+        borderRadius: BorderRadius.circular(30.0),
       ),
       child: _buildTimePicker(),
     );
   }
 
   Widget _buildTimePicker() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Giờ',
-                style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30),
-              child: Text('Phút',
-                  style: TextStyle(color: Colors.blue, fontSize: 18,fontWeight: FontWeight.bold)),
-            )
-          ],
-        ),
-        TimePickerSpinner(
-          is24HourMode: true,
-          normalTextStyle: TextStyle(fontSize: 16, color: Colors.grey),
-          highlightedTextStyle: TextStyle(fontSize: 18, color: Colors.black),
-          spacing: 20,
-          isForce2Digits: true,
-          onTimeChange: (time) {
+    return FlatButton(
+        onPressed: () {
+          DatePicker.showDateTimePicker(context,
+              showTitleActions: true, onChanged: (date) {}, onConfirm: (date) {
+            DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm');
             setState(() {
-              // _dateTime = time;
+              currentTime = formatter.format(date);
             });
-          },
-        ),
-      ],
-    );
+          }, currentTime: DateTime.now(), locale: LocaleType.vi);
+        },
+        child: Text(
+          currentTime,
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ));
+  }
+
+  void _setCurrentTime() {
+    DateTime dateTime = DateTime.now();
+    DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm');
+    currentTime = formatter.format(dateTime);
   }
 }

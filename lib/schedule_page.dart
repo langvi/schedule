@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:thoikhoabieu/test_db.dart';
 
 import 'add_schedule_page.dart';
+import 'base/colors.dart';
+import 'event_note.dart';
 
 class Schedule extends StatefulWidget {
   Schedule({Key key}) : super(key: key);
@@ -60,8 +62,10 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text('Demo'),
+          backgroundColor: AppColors.colorAppBar,
+          title: Text('Ghi chú'),
         ),
         body: BlocProvider<ScheduleBloc>(
             create: (context) => bloc,
@@ -76,18 +80,10 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
             }, builder: (context, state) {
               return Column(
                 children: <Widget>[
-                  _buildTitle(homNay),
+                  // _buildTitle(homNay),
                   // _buildSchedule(lich),
                   _buildCalendar(),
-                  RaisedButton(
-                    onPressed: () {
-                      //  _delete();
-                      // print(dbHelper.database.toString());
-                      // dbHelper.renameColumn();
-                      // _insert('Hoc','20/12/2020',note: 'Dai so');
-                    },
-                    child: Text('OK'),
-                  ),
+
                   IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () {
@@ -98,7 +94,8 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
                     },
                     color: Colors.blue,
                     iconSize: 30,
-                  )
+                  ),
+                  _buildEvent()
                 ],
               );
             })));
@@ -154,6 +151,40 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
 
       // onVisibleDaysChanged: _onVisibleDaysChanged,
       // onCalendarCreated: _onCalendarCreated,
+    );
+  }
+
+  Widget _buildEvent() {
+    String content =
+        'The more humble you act, the further away some happiness will be from you';
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+        padding: EdgeInsets.all(10.0),
+        height: 120,
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.8),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), 
+          ),
+        ], borderRadius: BorderRadius.circular(20.0), color: Colors.green[200]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Title',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(content),
+            Text('20/12/2022')
+          ],
+        ),
+      ),
     );
   }
 

@@ -11,20 +11,44 @@ class AddSchedule extends StatefulWidget {
 }
 
 class _AddScheduleState extends State<AddSchedule> {
-  TextEditingController controller = TextEditingController();
+  TextEditingController controllerTitle = TextEditingController();
+  TextEditingController controllerContent = TextEditingController();
   final FocusNode _textFocus = FocusNode();
-  bool isShow = false;
+  bool _isAlarm = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[_buildAppBar(), _buildBody()],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            _buildAppBar(),
+            SizedBox(
+              height: 20,
+            ),
+            _buildTimePicker(),
+            _buildNote(),
+            Divider(
+              height: 1,
+              indent: 10,
+              endIndent: 10,
+              thickness: 1,
+            ),
+            _buildAlarm(),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 10,
+              endIndent: 10,
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildBody() {
-    return Column(
+  Widget _buildTimePicker() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(10.0),
@@ -33,7 +57,11 @@ class _AddScheduleState extends State<AddSchedule> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
-        TimePicker()
+        Expanded(
+            child: Padding(
+          padding: const EdgeInsets.only(right: 10.0),
+          child: TimePicker(),
+        ))
       ],
     );
   }
@@ -57,7 +85,9 @@ class _AddScheduleState extends State<AddSchedule> {
                         Icons.clear,
                         color: Colors.white,
                       ),
-                      onPressed: () {})),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })),
               Padding(
                   padding: const EdgeInsets.only(top: 10.0, right: 6.0),
                   child: IconButton(
@@ -85,9 +115,55 @@ class _AddScheduleState extends State<AddSchedule> {
   }
 
   Widget _buildNote() {
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Ghi chú',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )),
+          SizedBox(
+            height: 10,
+          ),
+          TextField(
+            controller: controllerContent,
+            maxLines: 8,
+            decoration: InputDecoration(
+                hintText: 'Hãy nhập gì đó',
+                fillColor: Colors.grey[200],
+                filled: true,
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(15.0))),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlarm() {
+    return Row(
       children: <Widget>[
-        Text('Ghi chú'),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Icon(Icons.notifications_active, color: AppColors.colorAppBar),
+        ),
+        Expanded(
+          child: Text(
+            'Nhắc nhở',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        Switch(
+            value: _isAlarm,
+            onChanged: (v) {
+              setState(() {
+                _isAlarm = v;
+              });
+            })
       ],
     );
   }
@@ -96,17 +172,17 @@ class _AddScheduleState extends State<AddSchedule> {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
       child: TextFormField(
-        controller: controller,
+        controller: controllerTitle,
         focusNode: _textFocus,
         style: TextStyle(color: AppColors.colorTextAppBar),
         decoration: const InputDecoration(
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.backGroundTextField),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
           hintText: 'Nhập tiêu đề',
           fillColor: AppColors.backGroundTextField,
           filled: true,
           hintStyle: TextStyle(color: Colors.white),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.backGroundTextField),
-          ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               borderSide: BorderSide(color: Colors.blue)),
