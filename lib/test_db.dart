@@ -51,7 +51,9 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllRows(int id) async {
     Database db = await instance.database;
     return await db.query(table,
-        where: '$columnId = ?', whereArgs: [id], columns: [columnTask, columnDateTime]);
+        where: '$columnId = ?',
+        whereArgs: [id],
+        columns: [columnTask, columnDateTime]);
   }
 
   Future<int> queryRowCount() async {
@@ -71,10 +73,11 @@ class DatabaseHelper {
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  Future<void> renameColumn() async {
+  Future<List<Map<String, dynamic>>> queryTest() async {
     Database db = await instance.database;
-
-    print(db.path);
+    return await db.rawQuery(
+        'select $columnNote, $columnDateTime, $columnTask from $table');
+    // print(data.toString());
 
 //     await db.execute('ALTER TABLE $table RENAME TO new_table');
 //     await db.execute('''

@@ -41,9 +41,18 @@ class _TimePickerState extends State<TimePicker> {
             });
           }, currentTime: DateTime.now(), locale: LocaleType.vi);
         },
-        child: Text(
-          currentTime,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              currentTime,
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            Icon(
+              Icons.today,
+              color: Colors.white,
+            )
+          ],
         ));
   }
 

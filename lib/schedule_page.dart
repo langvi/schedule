@@ -18,42 +18,35 @@ class Schedule extends StatefulWidget {
 }
 
 class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
-  Map<DateTime, List> _events;
+  var _events;
   List _selectedEvents;
+  List<Map<String, dynamic>> listEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
   LichHoc lich;
   String homNay;
   String dayOfWeek;
   String name = '';
+  String contentNote = '';
+  bool _isShowNote = false;
   ScheduleBloc bloc;
+  final _selectedDay = DateTime.now();
   final dbHelper = DatabaseHelper.instance;
   @override
   void initState() {
     super.initState();
-    // bloc = BlocProvider.of<ScheduleBloc>(context);
     bloc = ScheduleBloc(dbHelper);
     bloc.add(LoadData());
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('dd-MM-yyyy');
     homNay = formatter.format(now);
-    final _selectedDay = DateTime.now();
     dayOfWeek = convertToVN(now);
-    // _query(1);
     lich = LichHoc(timeHour: '', type: 'd');
-    _events = {
-      _selectedDay.subtract(Duration(days: 30)): [
-        'Event A0',
-        'Event B0',
-        'Event C0'
-      ],
-      _selectedDay.subtract(Duration(days: 27)): ['Event A1'],
-    };
-    _selectedEvents = _events[_selectedDay] ?? [];
+    _setEvent();
     _calendarController = CalendarController();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 200),
     );
 
     _animationController.forward();
@@ -78,25 +71,40 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
                 lich = state.lichHoc;
               }
             }, builder: (context, state) {
-              return Column(
-                children: <Widget>[
-                  // _buildTitle(homNay),
-                  // _buildSchedule(lich),
-                  _buildCalendar(),
-
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AddSchedule()),
-                      );
-                    },
-                    color: Colors.blue,
-                    iconSize: 30,
-                  ),
-                  _buildEvent()
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    // _buildTitle(homNay),
+                    // _buildSchedule(lich),
+                    _buildCalendar(),
+                    _buildButton(),
+                    _buildEventList()
+                    // _buildEvent(contentNote)
+                    // _buildEventList()
+                    // RaisedButton(
+                    //   onPressed: () {
+                    //     dbHelper.queryTest();
+                    //     // _update();
+                    //     // _query(1);
+                    //   },
+                    //   child: Text('OK'),
+                    // ),
+                    // IconButton(
+                    //   icon: Icon(Icons.add),
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => AddSchedule()),
+                    //     );
+                    //   },
+                    //   color: Colors.blue,
+                    //   iconSize: 30,
+                    // ),
+                    // _buildEvent()
+                  ],
+                ),
               );
             })));
   }
@@ -130,14 +138,13 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
       calendarController: _calendarController,
       events: _events,
       locale: 'vi_VN',
-      startingDayOfWeek: StartingDayOfWeek.monday,
+      startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.deepOrange[400],
         todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
+        markersColor: Colors.blue,
         outsideDaysVisible: false,
       ),
-
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         formatButtonTextStyle:
@@ -148,44 +155,85 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
         ),
       ),
       onDaySelected: _onDaySelected,
-
-      // onVisibleDaysChanged: _onVisibleDaysChanged,
-      // onCalendarCreated: _onCalendarCreated,
     );
   }
 
-  Widget _buildEvent() {
-    String content =
-        'The more humble you act, the further away some happiness will be from you';
+  Widget _buildButton() {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.only(right: 15.0),
       child: Container(
-        padding: EdgeInsets.all(10.0),
-        height: 120,
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.8),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3), 
-          ),
-        ], borderRadius: BorderRadius.circular(20.0), color: Colors.green[200]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Title',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          padding: EdgeInsets.all(6.0),
+          decoration:
+              BoxDecoration(shape: BoxShape.circle, color: Colors.orange),
+          child: IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () async {
+              listEvents = await dbHelper.queryTest();
+              listEvents.forEach((element) {
+                element.values.forEach((value) {
+                  print(value);
+                });
+              });
+              // print(_selectedEvents.toString());
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => AddSchedule()),
+              // );
+            },
+            color: Colors.white,
+          )),
+    );
+  }
+
+  Widget _buildEvent(String content) {
+    return Visibility(
+      visible: _isShowNote,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          padding: EdgeInsets.all(10.0),
+          height: 100,
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.8),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(20.0),
+              color: Colors.green[200]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Title',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Text(content),
-            Text('20/12/2022')
-          ],
+              Text(content),
+              Text('20/12/2022')
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildEventList() {
+    return ListView.builder(
+        shrinkWrap: true,
+        primary: false,
+        itemCount: _selectedEvents.length,
+        itemBuilder: (context, index) {
+          var title = _selectedEvents[index];
+          return ListTile(
+            title: _buildEvent(title),
+          );
+        });
   }
 
   void _onDaySelected(DateTime day, List events) {
@@ -194,7 +242,14 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
       dayOfWeek = convertToVN(day);
       homNay = formatter.format(day);
       _selectedEvents = events;
+      if (_selectedEvents.isNotEmpty) {
+        _isShowNote = true;
+        contentNote = _selectedEvents.elementAt(0).toString();
+      } else {
+        _isShowNote = false;
+      }
     });
+    // print(_selectedEvents.toString());
   }
 
   String convertToVN(DateTime day) {
@@ -220,6 +275,18 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
     }
   }
 
+  void _setEvent() async {
+    listEvents = await dbHelper.queryTest();
+    listEvents.forEach((element) {});
+    // String date = '2020-07-24';
+    // DateTime dt = DateTime.parse(date);
+    // _events = {
+    //   _selectedDay: ['Hoc', 'Di', 'sdsds', 'dsdsdsds', 'dsds'],
+    //   dt: ['Code'],
+    // };
+    // _selectedEvents = _events[_selectedDay] ?? [];
+  }
+
   void _insert(String nameTask, String dateTime, {String note = ''}) async {
     Map<String, dynamic> row = {
       DatabaseHelper.columnTask: nameTask,
@@ -242,9 +309,10 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
   void _update() async {
     // row to update
     Map<String, dynamic> row = {
-      DatabaseHelper.columnId: 1,
-      DatabaseHelper.columnTask: 'Mary',
-      DatabaseHelper.columnNote: 32
+      DatabaseHelper.columnId: 2,
+      DatabaseHelper.columnTask: 'Code',
+      DatabaseHelper.columnNote: 'flutter is cross flatform',
+      DatabaseHelper.columnDateTime: '07-07-2020 10:54'
     };
     final rowsAffected = await dbHelper.update(row);
     print('updated $rowsAffected row(s)');

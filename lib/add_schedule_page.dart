@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thoikhoabieu/time_picker.dart';
-
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:thoikhoabieu/test_db.dart';
 import 'base/colors.dart';
+import 'event_note.dart';
 
 class AddSchedule extends StatefulWidget {
   AddSchedule({Key key}) : super(key: key);
@@ -14,7 +16,21 @@ class _AddScheduleState extends State<AddSchedule> {
   TextEditingController controllerTitle = TextEditingController();
   TextEditingController controllerContent = TextEditingController();
   final FocusNode _textFocus = FocusNode();
+  String currentTime = '';
   bool _isAlarm = false;
+  Event _event;
+  bool _isValidate = true;
+  final _formKey = GlobalKey<FormState>();
+  final dbHelper = DatabaseHelper.instance;
+  @override
+  void initState() {
+    super.initState();
+    DateTime dateTime = DateTime.now();
+    DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm');
+    currentTime = formatter.format(dateTime);
+    // _event = Event();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +76,7 @@ class _AddScheduleState extends State<AddSchedule> {
         Expanded(
             child: Padding(
           padding: const EdgeInsets.only(right: 10.0),
-          child: TimePicker(),
+          child: _buildDateTimePicker(),
         ))
       ],
     );
@@ -68,7 +84,7 @@ class _AddScheduleState extends State<AddSchedule> {
 
   Widget _buildAppBar() {
     return Container(
-      height: 160,
+      height: 180,
       decoration: BoxDecoration(
           color: AppColors.colorAppBar,
           borderRadius: BorderRadius.circular(20.0)),
@@ -95,7 +111,17 @@ class _AddScheduleState extends State<AddSchedule> {
                         Icons.check,
                         color: Colors.white,
                       ),
-                      onPressed: () {}))
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          FocusScope.of(context).unfocus();
+                          _addContent();
+                          _insert(_event.title, _event.dateTime,
+                              note: _event.content);
+                          Navigator.pop(context);
+                        } else {
+                          // FocusScope.of(context).previousFocus();
+                        }
+                      }))
             ],
           ),
           Align(
@@ -169,25 +195,94 @@ class _AddScheduleState extends State<AddSchedule> {
   }
 
   Widget _buildInputText() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-      child: TextFormField(
-        controller: controllerTitle,
-        focusNode: _textFocus,
-        style: TextStyle(color: AppColors.colorTextAppBar),
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.backGroundTextField),
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          hintText: 'Nhập tiêu đề',
-          fillColor: AppColors.backGroundTextField,
-          filled: true,
-          hintStyle: TextStyle(color: Colors.white),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              borderSide: BorderSide(color: Colors.blue)),
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+        child: TextFormField(
+          controller: controllerTitle,
+          focusNode: _textFocus,
+          style: TextStyle(color: AppColors.colorTextAppBar),
+          validator: (value) {
+            if (controllerTitle.text.isEmpty) {
+              return 'Hãy nhập vào tiêu đề';
+            } else {
+              return null;
+            }
+          },
+          decoration: const InputDecoration(
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange),
+            ),
+            errorStyle: TextStyle(color: Colors.orange, fontSize: 14),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange),
+            ),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.backGroundTextField),
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            hintText: 'Nhập tiêu đề',
+            fillColor: AppColors.backGroundTextField,
+            filled: true,
+            hintStyle: TextStyle(color: Colors.white),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(color: Colors.blue)),
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildDateTimePicker() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.colorButton,
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      child: FlatButton(
+          onPressed: () {
+            DatePicker.showDateTimePicker(context,
+                showTitleActions: true,
+                onChanged: (date) {}, onConfirm: (date) {
+              DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm');
+              setState(() {
+                currentTime = formatter.format(date);
+              });
+            }, currentTime: DateTime.now(), locale: LocaleType.vi);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                currentTime,
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              Icon(
+                Icons.today,
+                color: Colors.white,
+              )
+            ],
+          )),
+    );
+  }
+
+  void _addContent() {
+    String title = controllerTitle.text;
+    String note = controllerContent.text;
+    _event = Event(title: title, content: note, dateTime: currentTime);
+    print(_event.content);
+    print(_event.dateTime);
+    print(_event.title);
+  }
+
+  void _insert(String nameTask, String dateTime, {String note = ''}) async {
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnTask: nameTask,
+      DatabaseHelper.columnNote: note,
+      DatabaseHelper.columnDateTime: dateTime
+    };
+    final id = await dbHelper.insert(row);
+    print('inserted row id: $id');
   }
 }
