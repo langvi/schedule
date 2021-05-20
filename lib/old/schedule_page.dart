@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:thoikhoabieu/bloc/schedule_bloc.dart';
-import 'package:thoikhoabieu/schedule_detail.dart';
+import 'package:thoikhoabieu/old/schedule_detail.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:thoikhoabieu/test_db.dart';
+import 'package:thoikhoabieu/old/test_db.dart';
 
 import 'add_schedule_page.dart';
-import 'base/colors.dart';
+import '../base/colors.dart';
 import 'event_note.dart';
 
 class Schedule extends StatefulWidget {
-  Schedule({Key key}) : super(key: key);
+  Schedule({Key? key}) : super(key: key);
 
   @override
   _ScheduleState createState() => _ScheduleState();
@@ -19,17 +19,16 @@ class Schedule extends StatefulWidget {
 
 class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
   var _events;
-  List _selectedEvents;
-  List<Map<String, dynamic>> listEvents;
-  AnimationController _animationController;
-  CalendarController _calendarController;
-  LichHoc lich;
-  String homNay;
-  String dayOfWeek;
+  late List _selectedEvents;
+  late List<Map<String, dynamic>> listEvents;
+  late AnimationController _animationController;
+  LichHoc? lich;
+  String? homNay;
+  late String dayOfWeek;
   String name = '';
   String contentNote = '';
   bool _isShowNote = false;
-  ScheduleBloc bloc;
+  late ScheduleBloc bloc;
   final _selectedDay = DateTime.now();
   final dbHelper = DatabaseHelper.instance;
   @override
@@ -43,7 +42,6 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
     dayOfWeek = convertToVN(now);
     lich = LichHoc(timeHour: '', type: 'd');
     _setEvent();
-    _calendarController = CalendarController();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -77,7 +75,7 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
                   children: <Widget>[
                     // _buildTitle(homNay),
                     // _buildSchedule(lich),
-                    _buildCalendar(),
+                    // _buildCalendar(),
                     _buildButton(),
                     _buildEventList()
                     // _buildEvent(contentNote)
@@ -133,30 +131,30 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCalendar() {
-    return TableCalendar(
-      calendarController: _calendarController,
-      events: _events,
-      locale: 'vi_VN',
-      startingDayOfWeek: StartingDayOfWeek.sunday,
-      calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400],
-        todayColor: Colors.deepOrange[200],
-        markersColor: Colors.blue,
-        outsideDaysVisible: false,
-      ),
-      headerStyle: HeaderStyle(
-        formatButtonVisible: false,
-        formatButtonTextStyle:
-            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-      ),
-      onDaySelected: _onDaySelected,
-    );
-  }
+  // Widget _buildCalendar() {
+  //   return TableCalendar(
+  //     calendarController: _calendarController,
+  //     events: _events,
+  //     locale: 'vi_VN',
+  //     startingDayOfWeek: StartingDayOfWeek.sunday,
+  //     calendarStyle: CalendarStyle(
+  //       selectedColor: Colors.deepOrange[400],
+  //       todayColor: Colors.deepOrange[200],
+  //       markersColor: Colors.blue,
+  //       outsideDaysVisible: false,
+  //     ),
+  //     headerStyle: HeaderStyle(
+  //       formatButtonVisible: false,
+  //       formatButtonTextStyle:
+  //           TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+  //       formatButtonDecoration: BoxDecoration(
+  //         color: Colors.deepOrange[400],
+  //         borderRadius: BorderRadius.circular(16.0),
+  //       ),
+  //     ),
+  //     onDaySelected: _onDaySelected,
+  //   );
+  // }
 
   Widget _buildButton() {
     return Padding(

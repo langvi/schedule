@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:thoikhoabieu/base/colors.dart';
 
 class TimePicker extends StatefulWidget {
-  TimePicker({Key key}) : super(key: key);
+  TimePicker({Key? key}) : super(key: key);
 
   @override
   _TimePickerState createState() => _TimePickerState();

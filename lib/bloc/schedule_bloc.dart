@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:thoikhoabieu/schedule_detail.dart';
-import 'package:thoikhoabieu/test_db.dart';
+import 'package:thoikhoabieu/old/schedule_detail.dart';
+import 'package:thoikhoabieu/old/test_db.dart';
 
 part 'schedule_event.dart';
 part 'schedule_state.dart';

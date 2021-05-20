@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thoikhoabieu/schedule_page.dart';
+import 'package:thoikhoabieu/features/home/home_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Ghi chú',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: Schedule());
+        home: HomePage());
   }
 }

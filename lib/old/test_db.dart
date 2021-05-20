@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -18,8 +19,8 @@ class DatabaseHelper {
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  static Database _database;
-  Future<Database> get database async {
+  static Database? _database;
+  Future<Database?> get database async {
     if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
@@ -44,37 +45,37 @@ class DatabaseHelper {
   }
 
   Future<int> insert(Map<String, dynamic> row) async {
-    Database db = await instance.database;
+    Database db = await (instance.database as FutureOr<Database>);
     return await db.insert(table, row);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(int id) async {
-    Database db = await instance.database;
+    Database db = await (instance.database as FutureOr<Database>);
     return await db.query(table,
         where: '$columnId = ?',
         whereArgs: [id],
         columns: [columnTask, columnDateTime]);
   }
 
-  Future<int> queryRowCount() async {
-    Database db = await instance.database;
+  Future<int?> queryRowCount() async {
+    Database db = await (instance.database as FutureOr<Database>);
     return Sqflite.firstIntValue(
         await db.rawQuery('SELECT COUNT(*) FROM $table'));
   }
 
   Future<int> update(Map<String, dynamic> row) async {
-    Database db = await instance.database;
-    int id = row[columnId];
+    Database db = await (instance.database as FutureOr<Database>);
+    int? id = row[columnId];
     return await db.update(table, row, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  Future<int> delete(int id) async {
-    Database db = await instance.database;
+  Future<int> delete(int? id) async {
+    Database db = await (instance.database as FutureOr<Database>);
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<List<Map<String, dynamic>>> queryTest() async {
-    Database db = await instance.database;
+    Database db = await (instance.database as FutureOr<Database>);
     return await db.rawQuery(
         'select $columnNote, $columnDateTime, $columnTask from $table');
     // print(data.toString());

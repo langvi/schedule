@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:thoikhoabieu/test_db.dart';
-import 'base/colors.dart';
+import 'package:thoikhoabieu/old/test_db.dart';
+import '../base/colors.dart';
 import 'event_note.dart';
 
 class AddSchedule extends StatefulWidget {
-  AddSchedule({Key key}) : super(key: key);
+  AddSchedule({Key? key}) : super(key: key);
 
   @override
   _AddScheduleState createState() => _AddScheduleState();
@@ -18,7 +18,7 @@ class _AddScheduleState extends State<AddSchedule> {
   final FocusNode _textFocus = FocusNode();
   String currentTime = '';
   bool _isAlarm = false;
-  Event _event;
+  late Event _event;
   bool _isValidate = true;
   final _formKey = GlobalKey<FormState>();
   final dbHelper = DatabaseHelper.instance;
@@ -112,7 +112,7 @@ class _AddScheduleState extends State<AddSchedule> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           FocusScope.of(context).unfocus();
                           _addContent();
                           _insert(_event.title, _event.dateTime,
@@ -276,7 +276,7 @@ class _AddScheduleState extends State<AddSchedule> {
     print(_event.title);
   }
 
-  void _insert(String nameTask, String dateTime, {String note = ''}) async {
+  void _insert(String? nameTask, String? dateTime, {String? note = ''}) async {
     Map<String, dynamic> row = {
       DatabaseHelper.columnTask: nameTask,
       DatabaseHelper.columnNote: note,
