@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'colors.dart';
 
 class BaseWidget {
   static Widget appBar(BuildContext context, Widget action) {

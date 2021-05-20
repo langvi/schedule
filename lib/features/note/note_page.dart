@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:thoikhoabieu/base/base_widget.dart';
+import 'package:thoikhoabieu/base/consts.dart';
 import 'package:thoikhoabieu/base/styles.dart';
+import 'package:thoikhoabieu/database/note.dart';
+import 'package:thoikhoabieu/features/note/cubit/note_cubit.dart';
 import 'package:thoikhoabieu/utils/appbar_zero_height.dart';
+import 'package:thoikhoabieu/utils/convert_value.dart';
+
+import '../../main.dart';
 
 class NotePage extends StatefulWidget {
-  NotePage({Key? key}) : super(key: key);
+  final Note? note;
+  NotePage({Key? key, this.note}) : super(key: key);
 
   @override
   _NotePageState createState() => _NotePageState();
@@ -16,40 +24,83 @@ class _NotePageState extends State<NotePage> {
   final _titleFocus = FocusNode();
   final _contentFocus = FocusNode();
   final _formKey = GlobalKey<FormState>();
+  late NoteCubit _noteCubit;
   @override
   void initState() {
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
+    String title = '';
+    String content = '';
+    if (widget.note != null) {
+      title = widget.note!.title;
+      content = widget.note!.content;
+    }
+    _titleController = TextEditingController(text: title);
+    _contentController = TextEditingController(text: content);
     _titleFocus.requestFocus();
+    _noteCubit = NoteCubit();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AnonymousAppBar(
-        color: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: BaseWidget.appBar(context, _buildAction()),
-          ),
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: _buildBody(),
-          ))
-        ],
+    return BlocProvider<NoteCubit>(
+      create: (context) => _noteCubit,
+      child: BlocConsumer<NoteCubit, NoteState>(
+        listener: (context, state) {
+          if (state is SaveNoteSuccess) {
+            if (widget.note != null) {
+              Navigator.pop(context);
+            }
+            Navigator.pop(context);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AnonymousAppBar(
+              color: Colors.black,
+            ),
+            backgroundColor: Colors.black,
+            body: Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: BaseWidget.appBar(context, _buildAction()),
+                ),
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: _buildBody(),
+                ))
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildAction() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (widget.note != null) {
+          print('start update note...');
+          Note currentNote = Note(
+              id: widget.note!.id,
+              title: _titleController.text.trim(),
+              content: _contentController.text,
+              dateTime: widget.note!.dateTime);
+
+          _noteCubit.updateNote(currentNote);
+        } else {
+          int id = prefs!.getInt(AppConst.keyId) ?? 1;
+          print('max ID in database = $id');
+          _noteCubit.saveNote(Note(
+              id: id,
+              title: _titleController.text.trim(),
+              content: _contentController.text,
+              dateTime: convertDateToString(DateTime.now())));
+        }
+      },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         decoration: BoxDecoration(
