@@ -28,7 +28,7 @@ class _DetailNotePageState extends State<DetailNotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AnonymousAppBar(
         color: Colors.black,
       ),
@@ -67,7 +67,7 @@ class _DetailNotePageState extends State<DetailNotePage> {
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -91,7 +91,7 @@ class _DetailNotePageState extends State<DetailNotePage> {
                   borderRadius: BorderRadius.circular(8)),
               child: Icon(
                 Feather.edit,
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
                 size: 20,
               ),
             ),
@@ -108,7 +108,11 @@ class _DetailNotePageState extends State<DetailNotePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.note.title, style: BaseStyles.textTitle),
+            Text(widget.note.title,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).primaryColor)),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
@@ -116,7 +120,11 @@ class _DetailNotePageState extends State<DetailNotePage> {
                 style: BaseStyles.textTimeWhite,
               ),
             ),
-            Text(widget.note.content, style: BaseStyles.textContent),
+            Text(widget.note.content,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).primaryColor)),
           ],
         ),
       ),

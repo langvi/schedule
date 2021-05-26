@@ -24,6 +24,7 @@ class _NotePageState extends State<NotePage> {
   final _titleFocus = FocusNode();
   final _contentFocus = FocusNode();
   final _formKey = GlobalKey<FormState>();
+  bool _isShowSave = false;
   late NoteCubit _noteCubit;
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _NotePageState extends State<NotePage> {
             appBar: AnonymousAppBar(
               color: Colors.black,
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: Theme.of(context).backgroundColor,
             body: Column(
               children: [
                 Padding(
@@ -80,36 +81,42 @@ class _NotePageState extends State<NotePage> {
   }
 
   Widget _buildAction() {
-    return InkWell(
-      onTap: () {
-        if (widget.note != null) {
-          print('start update note...');
-          Note currentNote = Note(
-              id: widget.note!.id,
-              title: _titleController.text.trim(),
-              content: _contentController.text,
-              dateTime: widget.note!.dateTime);
+    return Visibility(
+      visible: _isShowSave,
+      child: InkWell(
+        onTap: () {
+          if (widget.note != null) {
+            print('start update note...');
+            Note currentNote = Note(
+                id: widget.note!.id,
+                title: _titleController.text.trim(),
+                content: _contentController.text,
+                dateTime: widget.note!.dateTime);
 
-          _noteCubit.updateNote(currentNote);
-        } else {
-          int id = prefs!.getInt(AppConst.keyId) ?? 1;
-          print('max ID in database = $id');
-          _noteCubit.saveNote(Note(
-              id: id,
-              title: _titleController.text.trim(),
-              content: _contentController.text,
-              dateTime: convertDateToString(DateTime.now())));
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(10)),
-        child: Center(
-          child: Text(
-            'Lưu',
-            style: BaseStyles.textActiveWhite,
+            _noteCubit.updateNote(currentNote);
+          } else {
+            int id = prefs!.getInt(AppConst.keyId) ?? 1;
+            print('max ID in database = $id');
+            _noteCubit.saveNote(Note(
+                id: id,
+                title: _titleController.text.trim(),
+                content: _contentController.text,
+                dateTime: convertDateToString(DateTime.now())));
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(10)),
+          child: Center(
+            child: Text(
+              'Lưu',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).primaryColor),
+            ),
           ),
         ),
       ),
@@ -135,8 +142,12 @@ class _NotePageState extends State<NotePage> {
     return TextFormField(
       controller: _titleController,
       focusNode: _titleFocus,
+      onChanged: (value) {
+        _isShowSave = value.trim().isNotEmpty;
+        setState(() {});
+      },
       textInputAction: TextInputAction.next,
-      style: TextStyle(color: Colors.grey, fontSize: 18),
+      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18),
       decoration: InputDecoration(
           hintText: 'Tiêu đề',
           hintStyle: TextStyle(color: Colors.grey, fontSize: 18)),
@@ -149,7 +160,7 @@ class _NotePageState extends State<NotePage> {
       focusNode: _contentFocus,
       keyboardType: TextInputType.multiline,
       maxLines: 100,
-      style: TextStyle(color: Colors.grey, fontSize: 14),
+      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 14),
       decoration: InputDecoration(
           hintText: 'Hãy viết gì đó...',
           hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),

@@ -75,7 +75,6 @@ class SqlLiteHelper {
   }
 
   Future<int> delete(int? id) async {
-    // Database db = await (instance.database as FutureOr<Database>);
     return await _database!
         .delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
@@ -84,8 +83,13 @@ class SqlLiteHelper {
       int pageIndex, int pageSize) async {
     print(
         'start get data with pageIndex = $pageIndex , pageSize = $pageSize....');
-    // Database db = await (instance.database as FutureOr<Database>);
     return await _database!.rawQuery(
         'select $columnId, $columnContent, $columnDateTime, $columnTitle from $table limit $pageSize offset $pageIndex');
+  }
+
+  Future<List<Map<String, dynamic>>> queryByString(String keyword) async {
+    String str = '%$keyword%';
+    return await _database!.rawQuery(
+        'select * from $table where $columnTitle like "$str" limit 10');
   }
 }

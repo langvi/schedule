@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:thoikhoabieu/base/app_cubit/cubit/app_cubit.dart';
 import 'package:thoikhoabieu/base/styles.dart';
 import 'package:thoikhoabieu/database/note.dart';
 import 'package:thoikhoabieu/features/detail_note/detail_note_page.dart';
 import 'package:thoikhoabieu/features/home/cubit/home_cubit.dart';
 import 'package:thoikhoabieu/features/note/note_page.dart';
 import 'package:thoikhoabieu/features/search/search_delegate.dart';
+import 'package:thoikhoabieu/main.dart';
 import 'package:thoikhoabieu/utils/convert_value.dart';
 import 'package:thoikhoabieu/utils/navigator.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:thoikhoabieu/utils/popup_menu.dart';
+import 'package:thoikhoabieu/utils/type_load.dart';
 import '../../base/colors.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +26,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late HomeCubit _homeCubit;
   List<Note> notes = [];
+  int count = 0;
+  final _refreshController = RefreshController();
+  bool _hasLoadmore = true;
   @override
   void initState() {
     _homeCubit = HomeCubit();
@@ -36,22 +43,49 @@ class _HomePageState extends State<HomePage> {
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {
           if (state is GetNotesSuccess) {
-            notes = state.notes;
+            if (state.notes.length < PAGE_SIZE) {
+              _hasLoadmore = false;
+            } else {
+              _homeCubit.pageIndex++;
+            }
+            if (state.typeLoad == TypeLoad.loading) {
+              notes.addAll(state.notes);
+            } else {
+              notes = state.notes;
+            }
+          } else if (state is DeleteSuccess) {
+            notes.removeAt(state.indexRemove);
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: Colors.black,
+            backgroundColor: Theme.of(context).backgroundColor,
             appBar: AppBar(
-              backgroundColor: Colors.black,
+              backgroundColor:
+                  typeMode == 0 ? AppColors.mainColor : Colors.black,
+              // backgroundColor: Theme.of(context).backgroundColor,
               brightness: Brightness.dark,
-              title: Text('Ghi chú'),
+              title: Text(
+                'Ghi chú',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
               actions: [
                 IconButton(
                     icon: Icon(Icons.search),
+                    color: Theme.of(context).primaryColor,
                     onPressed: () {
-                      showSearch(context: context, delegate: CustomDelegate());
-                    })
+                      // _homeCubit.getSuggestNote('');
+                      showSearch(
+                          context: context,
+                          delegate: CustomDelegate(cubit: _homeCubit));
+                    }),
+                buildPopupMenu((value) {
+                  if (value != typeMode) {
+                    BlocProvider.of<AppCubit>(context).changeMode(value);
+                  }
+                }, context)
+                // IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
               ],
             ),
             body: _buildBody(),
@@ -66,7 +100,10 @@ class _HomePageState extends State<HomePage> {
                     });
               },
               backgroundColor: AppColors.mainColor,
-              child: Icon(Icons.add),
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           );
         },
@@ -83,23 +120,53 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-    return StaggeredGridView.countBuilder(
-      shrinkWrap: true,
-      padding: EdgeInsets.all(15),
-      itemCount: notes.length,
-      crossAxisCount: 4,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      itemBuilder: (context, index) {
-        return _buildItemNote(index.isEven ? 9 : 2, index);
+    return SmartRefresher(
+      controller: _refreshController,
+      enablePullDown: false,
+      enablePullUp: _hasLoadmore,
+      onLoading: () {
+        _homeCubit.getNotes(typeLoad: TypeLoad.loading);
       },
-      staggeredTileBuilder: (index) {
-        return StaggeredTile.count(2, notes[index].title.length > 20 ? 2 : 1);
-      },
+      child: StaggeredGridView.countBuilder(
+        shrinkWrap: true,
+        padding: EdgeInsets.all(15),
+        itemCount: notes.length,
+        crossAxisCount: 4,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        itemBuilder: (context, index) {
+          return _buildItemNote(index.isEven ? 9 : 2, index);
+        },
+        staggeredTileBuilder: (index) {
+          return StaggeredTile.count(
+              2, notes[index].content.length > 25 ? 2 : 1);
+        },
+      ),
     );
   }
 
   Widget _buildItemNote(int maxLine, int index) {
+    Color colorItem;
+    if (count > 4) {
+      count = 0;
+    }
+    switch (count) {
+      case 0:
+        colorItem = AppColors.mainColor;
+        break;
+      case 1:
+        colorItem = AppColors.colorNote1;
+        break;
+      case 2:
+        colorItem = AppColors.colorNote2;
+        break;
+      case 3:
+        colorItem = AppColors.colorNote3;
+        break;
+      default:
+        colorItem = AppColors.colorNote4;
+    }
+    count++;
     return Hero(
       tag: index,
       flightShuttleBuilder: (flightContext, animation, flightDirection,
@@ -109,7 +176,9 @@ class _HomePageState extends State<HomePage> {
           builder: (context, value) {
             return Container(
               color: Color.lerp(
-                  AppColors.mainColor, Colors.black87, animation.value),
+                  AppColors.mainColor,
+                  Theme.of(context).backgroundColor.withOpacity(0.5),
+                  animation.value),
             );
           },
         );
@@ -129,20 +198,41 @@ class _HomePageState extends State<HomePage> {
                     )),
           );
         },
+        onLongPress: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return ListTile(
+                onTap: () {
+                  _homeCubit.removeNote(notes[index].id, index);
+                },
+                leading: Icon(Icons.delete),
+                title: Text('Xóa ghi chú'),
+              );
+            },
+          );
+        },
         child: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: AppColors.mainColor,
-              borderRadius: BorderRadius.circular(5)),
+              color: colorItem, borderRadius: BorderRadius.circular(5)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Expanded(
+              //     child:
+              //         _buildTextNote(notes[index].title, notes[index].content, maxLine: )),
+              Text(
+                notes[index].title,
+                style: BaseStyles.textActive,
+                overflow: TextOverflow.ellipsis,
+              ),
               Expanded(
                 child: Text(
-                  notes[index].title,
+                  notes[index].content,
+                  maxLines: notes[index].content.length > 25 ? 6 : 2,
+                  style: BaseStyles.textContentBlack,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: maxLine,
-                  style: BaseStyles.textActive,
                 ),
               ),
               const SizedBox(
@@ -157,5 +247,14 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildTextNote(String title, String content, {int maxLine = 2}) {
+    return RichText(
+        overflow: TextOverflow.ellipsis,
+        maxLines: maxLine,
+        text: TextSpan(text: title, style: BaseStyles.textActive, children: [
+          TextSpan(text: '\n$content', style: BaseStyles.textContentBlack)
+        ]));
   }
 }
