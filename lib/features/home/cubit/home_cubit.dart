@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:thoikhoabieu/database/note.dart';
-import 'package:thoikhoabieu/utils/type_load.dart';
+import 'package:note_app/database/note.dart';
+import 'package:note_app/utils/type_load.dart';
 
 import '../../../main.dart';
 

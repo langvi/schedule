@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:thoikhoabieu/database/note.dart';
+import 'package:note_app/database/note.dart';
 
 class SqlLiteHelper {
   static final _databaseName = "Note.db";

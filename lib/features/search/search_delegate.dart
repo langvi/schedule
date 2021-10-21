@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:thoikhoabieu/base/colors.dart';
-import 'package:thoikhoabieu/database/note.dart';
-import 'package:thoikhoabieu/features/home/cubit/home_cubit.dart';
-import 'package:thoikhoabieu/features/note/note_page.dart';
-import 'package:thoikhoabieu/main.dart';
-import 'package:thoikhoabieu/utils/navigator.dart';
+import 'package:note_app/base/colors.dart';
+import 'package:note_app/database/note.dart';
+import 'package:note_app/features/home/cubit/home_cubit.dart';
+import 'package:note_app/features/note/note_page.dart';
+import 'package:note_app/main.dart';
+import 'package:note_app/utils/navigator.dart';
 
 class CustomDelegate extends SearchDelegate {
   final Function(String)? onSearch;

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:thoikhoabieu/base/app_cubit/cubit/app_cubit.dart';
-import 'package:thoikhoabieu/base/styles.dart';
-import 'package:thoikhoabieu/database/note.dart';
-import 'package:thoikhoabieu/features/detail_note/detail_note_page.dart';
-import 'package:thoikhoabieu/features/home/cubit/home_cubit.dart';
-import 'package:thoikhoabieu/features/note/note_page.dart';
-import 'package:thoikhoabieu/features/search/search_delegate.dart';
-import 'package:thoikhoabieu/main.dart';
-import 'package:thoikhoabieu/utils/convert_value.dart';
-import 'package:thoikhoabieu/utils/navigator.dart';
+import 'package:note_app/base/app_cubit/cubit/app_cubit.dart';
+import 'package:note_app/base/styles.dart';
+import 'package:note_app/database/note.dart';
+import 'package:note_app/features/detail_note/detail_note_page.dart';
+import 'package:note_app/features/home/cubit/home_cubit.dart';
+import 'package:note_app/features/note/note_page.dart';
+import 'package:note_app/features/search/search_delegate.dart';
+import 'package:note_app/main.dart';
+import 'package:note_app/utils/convert_value.dart';
+import 'package:note_app/utils/navigator.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:thoikhoabieu/utils/popup_menu.dart';
-import 'package:thoikhoabieu/utils/type_load.dart';
+import 'package:note_app/utils/popup_menu.dart';
+import 'package:note_app/utils/type_load.dart';
 import '../../base/colors.dart';
 
 class HomePage extends StatefulWidget {

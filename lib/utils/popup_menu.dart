@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:thoikhoabieu/base/colors.dart';
+import 'package:note_app/base/colors.dart';
 
 Widget buildPopupMenu(Function(int) onSelected, BuildContext context) {
   return PopupMenuButton<int>(

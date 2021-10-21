@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:thoikhoabieu/bloc/schedule_bloc.dart';
-import 'package:thoikhoabieu/old/schedule_detail.dart';
+import 'package:note_app/bloc/schedule_bloc.dart';
+import 'package:note_app/old/schedule_detail.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:thoikhoabieu/old/test_db.dart';
+import 'package:note_app/old/test_db.dart';
 
 import 'add_schedule_page.dart';
 import '../base/colors.dart';

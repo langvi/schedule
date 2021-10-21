@@ -1,4 +1,4 @@
-package com.example.thoikhoabieu;
+package com.vilang.note;
 
 import io.flutter.embedding.android.FlutterActivity;
 

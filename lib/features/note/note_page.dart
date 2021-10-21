@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:thoikhoabieu/base/base_widget.dart';
-import 'package:thoikhoabieu/base/consts.dart';
-import 'package:thoikhoabieu/base/styles.dart';
-import 'package:thoikhoabieu/database/note.dart';
-import 'package:thoikhoabieu/features/note/cubit/note_cubit.dart';
-import 'package:thoikhoabieu/utils/appbar_zero_height.dart';
-import 'package:thoikhoabieu/utils/convert_value.dart';
+import 'package:note_app/base/base_widget.dart';
+import 'package:note_app/base/consts.dart';
+import 'package:note_app/base/styles.dart';
+import 'package:note_app/database/note.dart';
+import 'package:note_app/features/note/cubit/note_cubit.dart';
+import 'package:note_app/utils/appbar_zero_height.dart';
+import 'package:note_app/utils/convert_value.dart';
 
 import '../../main.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:thoikhoabieu/base/colors.dart';
+import 'package:note_app/base/colors.dart';
 
 class TimePicker extends StatefulWidget {
   TimePicker({Key? key}) : super(key: key);

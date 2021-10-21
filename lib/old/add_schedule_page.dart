@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:thoikhoabieu/old/test_db.dart';
+import 'package:note_app/old/test_db.dart';
 import '../base/colors.dart';
 import 'event_note.dart';
 

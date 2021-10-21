@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:thoikhoabieu/base/styles.dart';
-import 'package:thoikhoabieu/database/note.dart';
-import 'package:thoikhoabieu/features/note/note_page.dart';
-import 'package:thoikhoabieu/utils/appbar_zero_height.dart';
-import 'package:thoikhoabieu/utils/convert_value.dart';
-import 'package:thoikhoabieu/utils/navigator.dart';
+import 'package:note_app/base/styles.dart';
+import 'package:note_app/database/note.dart';
+import 'package:note_app/features/note/note_page.dart';
+import 'package:note_app/utils/appbar_zero_height.dart';
+import 'package:note_app/utils/convert_value.dart';
+import 'package:note_app/utils/navigator.dart';
 
 import '../../base/colors.dart';
 

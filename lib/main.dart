@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:thoikhoabieu/base/app_cubit/cubit/app_cubit.dart';
-import 'package:thoikhoabieu/base/consts.dart';
-import 'package:thoikhoabieu/database/sql_lite.dart';
-import 'package:thoikhoabieu/features/home/home_page.dart';
+import 'package:note_app/base/app_cubit/cubit/app_cubit.dart';
+import 'package:note_app/base/consts.dart';
+import 'package:note_app/database/sql_lite.dart';
+import 'package:note_app/features/home/home_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 SqlLiteHelper databaseApp = SqlLiteHelper.instance;
