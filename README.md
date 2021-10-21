@@ -1,4 +1,4 @@
-# thoikhoabieu
+# Note App
 
 A new Flutter project.
 
